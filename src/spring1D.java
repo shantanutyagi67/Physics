@@ -6,6 +6,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Vector;
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
@@ -20,7 +22,9 @@ public class spring1D extends JComponent implements Runnable{
 	static int width = 1600, height = 900;
 	static double hinge = 50, nl = 100;
 	boolean yes = true;
-	static double x = 0, v = 0, ag =50, a, t = 0.01, m = 10, k = 2, time = 0, st, mv = Integer.MIN_VALUE, tp, mx = Integer.MIN_VALUE, radius = 25, ground = 800, offset=800;
+	Vector<Double> xx = new Vector<Double>();
+	Vector<Double> vv = new Vector<Double>();
+	static double x = 0, v = 0, ag =50, a, t = 0.05, m = 10, k = 2, time = 0, st, mv = Integer.MIN_VALUE, tp, mx = Integer.MIN_VALUE, radius = 25, ground = 800, offset=800;
 	public static void main(String args[]) {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(0,0,width+6+6+6,height+29+29+3);
@@ -41,8 +45,10 @@ public class spring1D extends JComponent implements Runnable{
     	g2D.setRenderingHints(rh);
     	a = ag - k * (x-(hinge+nl))/m;
     	v = v + a*t;
+    	vv.add(v);
     	mv = Math.max(v, mv);
     	x = x + v*t;
+    	xx.add(x);
     	mx = Math.max(x, mx);
     	g2D.setColor(Color.RED);
 		g2D.setFont(new Font("Monospaced", Font.BOLD, 30));
@@ -65,7 +71,16 @@ public class spring1D extends JComponent implements Runnable{
     	g2D.fill(new Ellipse2D.Double(offset-radius,Math.round(x)-radius,radius*2,radius*2));
     	g2D.draw(new Line2D.Double(offset,hinge,offset,x));
     	g2D.fill(new Rectangle2D.Double(0,ground+radius,1700,150));
+    	
     	g2D.setColor(Color.RED);
+    	
+    	for(int i=0;i<xx.size();i++)
+    		g2D.fill(new Ellipse2D.Double(1400+vv.get(i),250+0.8*xx.get(i),2,2));
+    	if(xx.size()>200) {
+    		xx.remove(0);
+    		vv.remove(0);
+    	}
+    	
     	g2D.draw(new Line2D.Double(offset-radius,x,offset+radius,x));
     	g2D.draw(new Line2D.Double(offset,x-radius,offset,x+radius));
     	g2D.draw(new Line2D.Double(0,hinge+nl,offset-radius,hinge+nl));
